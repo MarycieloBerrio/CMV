@@ -36,6 +36,8 @@ import Filters from '../organisms/Filters.vue'
 import ExpedientesTable from '../organisms/ExpedientesTable.vue'
 import Pagination from '../molecules/Pagination.vue'
 import { getExpedientes } from '../../api/ExpedienteService'
+import { computed } from 'vue'
+import { usePagination } from '@/shared/composables/usePagination'
 
 export default {
   name: 'ExpedienteTemplate',

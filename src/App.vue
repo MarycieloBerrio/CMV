@@ -1,12 +1,18 @@
 <template>
-  <div class="app">
+  <div class="min-h-screen font-karla antialiased text-gray-800">
     <router-view />
+    <NotificacionToast />
   </div>
 </template>
 
 <script>
+import NotificationToast from '@/shared/components/atoms/Toast.vue'
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    NotificationToast
+  }
 }
 </script>
 
@@ -27,6 +33,14 @@ body {
 }
 
 .app {
+  min-height: 100vh;
+}
+
+#app {
+  font-family: 'Karla', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
   min-height: 100vh;
 }
 </style>
