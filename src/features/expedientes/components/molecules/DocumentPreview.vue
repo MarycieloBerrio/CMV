@@ -4,11 +4,10 @@
     <div class="preview-controls" :class="{ 'pdf-controls': isPDF }">
       <div class="fullscreen-controls">
         <button @click="toggleFullscreen" class="control-button" :title="isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'">
-
           <span class="control-text">
-  <img v-if="isFullscreen" src="../../assets/images/minimizearrows.svg" alt="Exit Fullscreen" style="width: 1rem;" />
-  <img v-else src="../../assets/images/maximize_icon.svg" alt="Enter Fullscreen" />
-</span>
+            <img v-if="isFullscreen" src="../../assets/images/minimizearrows.svg" alt="Exit Fullscreen" style="width: 1rem;" />
+            <img v-else src="../../assets/images/maximize_icon.svg" alt="Enter Fullscreen" />
+          </span>
         </button>
       </div>
       <template v-if="isImage">
@@ -32,28 +31,30 @@
       </template>
     </div>
 
-    <div class="preview-content" :class="{ 'pdf-mode': isPDF, 'fullscreen': isFullscreen }">
-      <!-- Vista previa de PDF -->
-      <div v-if="isPDF" class="pdf-preview">
-        <embed
-          :src="pdfUrl"
-          type="application/pdf"
-          width="100%"
-          height="100%"
-        />
-      </div>
+    <div class="preview-content-wrapper">
+      <div class="preview-content" :class="{ 'pdf-mode': isPDF, 'fullscreen': isFullscreen }">
+        <!-- Vista previa de PDF -->
+        <div v-if="isPDF" class="pdf-preview">
+          <embed
+            :src="pdfUrl"
+            type="application/pdf"
+            width="100%"
+            height="100%"
+          />
+        </div>
 
-      <!-- Vista previa de imagen -->
-      <div v-else-if="isImage" class="image-preview" :style="contentStyle">
-        <img
-          :src="imageUrl"
-          :alt="documento.nombre"
-          class="preview-image"
-          @wheel="handleWheel"
-        />
-      </div>
-      <div v-else class="loading-preview">
-        Cargando vista previa...
+        <!-- Vista previa de imagen -->
+        <div v-else-if="isImage" class="image-preview" :style="contentStyle">
+          <img
+            :src="imageUrl"
+            :alt="documento.nombre"
+            class="preview-image"
+            @wheel="handleWheel"
+          />
+        </div>
+        <div v-else class="loading-preview">
+          Cargando vista previa...
+        </div>
       </div>
     </div>
   </div>
@@ -298,7 +299,7 @@ export default {
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange)
       document.removeEventListener('msfullscreenchange', handleFullscreenChange)
     })
-// Todo esto es por si el archivo es imagen, en los pdfs no es necesario y es más sencillo
+
     return {
       container,
       zoom,
@@ -321,4 +322,14 @@ export default {
   }
 }
 </script>
+
+<style>
+.preview-content-wrapper {
+  @apply flex flex-1;
+}
+
+.preview-content {
+  @apply flex-1;
+}
+</style>
 
