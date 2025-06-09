@@ -6,7 +6,13 @@
       <div class="title-separator"></div>
 
       <div class="expedientes-filters">
-        <Filters @filter="handleFilter" />
+        <Filters
+          @filter-by-expediente-id="handleExpedienteIdFilter"
+          @filter-by-name="handleNombreFilter"
+          @filter-by-socio-id="handleSocioIdFilter"
+          @filter-by-curp="handleCurpFilter"
+          @filter-by-state="handleEstadoFilter"
+        />
       </div>
 
       <div class="expedientes-table">
@@ -17,6 +23,11 @@
           @sort="handleSort"
           @view="handleView"
         />
+      </div>
+
+      <div v-if="filteredExpedientes.length === 0" class="no-results">
+        <p>No se encontraron expedientes que coincidan con los criterios de búsqueda</p>
+        <p class="subtitle">Intente ajustar los filtros de búsqueda</p>
       </div>
 
       <div class="expedientes-pagination">
@@ -61,42 +72,73 @@ export default {
         curp: '',
         estado: ''
       },
-      isSidebarCompact: localStorage.getItem('modoCompacto') === 'true' || false
+      isSidebarCompact: localStorage.getItem('modoCompacto') === 'true' || false,
+      loading: false
     }
   },
   computed: {
     filteredExpedientes() {
+      if (!this.expedientes) return [];
+
       return this.expedientes.filter(expediente => {
-        return (
-          expediente.expediente_id.toString().includes(this.filters.expedienteId) &&
-          expediente.nombre.toLowerCase().includes(this.filters.nombre.toLowerCase()) &&
-          expediente.socio_id.toString().includes(this.filters.socioId) &&
-          expediente.curp.toLowerCase().includes(this.filters.curp.toLowerCase()) &&
-          (!this.filters.estado || expediente.estado === this.filters.estado)
-        )
-      })
+        const expedienteIdMatch = !this.filters.expedienteId ||
+          expediente.expediente_id.toString().includes(this.filters.expedienteId);
+
+        const nombreMatch = !this.filters.nombre ||
+          expediente.nombre.toLowerCase().includes(this.filters.nombre.toLowerCase());
+
+        const socioIdMatch = !this.filters.socioId ||
+          expediente.socio_id.toString().includes(this.filters.socioId);
+
+        const curpMatch = !this.filters.curp ||
+          expediente.curp.toLowerCase().includes(this.filters.curp.toLowerCase());
+
+        const estadoMatch = !this.filters.estado ||
+          expediente.estado === this.filters.estado;
+
+        return expedienteIdMatch && nombreMatch && socioIdMatch && curpMatch && estadoMatch;
+      });
     }
   },
   methods: {
-    handleFilter(filters) {
-      this.filters = filters
+    handleExpedienteIdFilter(value) {
+      this.filters.expedienteId = value;
+      this.loadExpedientes();
+    },
+    handleNombreFilter(value) {
+      this.filters.nombre = value;
+      this.loadExpedientes();
+    },
+    handleSocioIdFilter(value) {
+      this.filters.socioId = value;
+      this.loadExpedientes();
+    },
+    handleCurpFilter(value) {
+      this.filters.curp = value;
+      this.loadExpedientes();
+    },
+    handleEstadoFilter(value) {
+      this.filters.estado = value;
+      this.loadExpedientes();
     },
     handleSort(column) {
       if (this.sortColumn === column) {
-        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc'
+        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
       } else {
-        this.sortColumn = column
-        this.sortOrder = 'asc'
+        this.sortColumn = column;
+        this.sortOrder = 'asc';
       }
+      this.loadExpedientes();
     },
     handleView(id) {
-      this.$router.push(`/expedientes/${id}`)
+      this.$router.push(`/expedientes/${id}`);
     },
     handlePageChange(page) {
-      this.currentPage = page
-      this.loadExpedientes()
+      this.currentPage = page;
+      this.loadExpedientes();
     },
     async loadExpedientes() {
+      this.loading = true;
       try {
         const response = await getExpedientes({
           page: this.currentPage,
@@ -104,25 +146,27 @@ export default {
           sort_by: this.sortColumn,
           sort_order: this.sortOrder,
           ...this.filters
-        })
+        });
 
-        this.expedientes = response.data || []
-        this.totalPages = Math.ceil(response.totalRecords / response.pageSize)
+        this.expedientes = response.data || [];
+        this.totalPages = Math.ceil(response.totalRecords / response.pageSize);
       } catch (error) {
-        console.error('Error loading expedientes:', error)
+        console.error('Error loading expedientes:', error);
+        // No mostramos el error al usuario, solo lo registramos
+      } finally {
+        this.loading = false;
       }
     },
     handleSidebarToggle(isCompact) {
-      this.isSidebarCompact = isCompact
+      this.isSidebarCompact = isCompact;
     },
     cerrarSesion() {
-      this.$store.dispatch('logout')
-      this.$router.push('/')
-      alert("Sesión cerrada")
+      this.$store.dispatch('logout');
+      this.$router.push('/');
     }
   },
   mounted() {
-    this.loadExpedientes()
+    this.loadExpedientes();
   }
 }
 </script>
@@ -183,6 +227,25 @@ export default {
 .expedientes-pagination {
   display: flex;
   justify-content: center;
+}
+
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.no-results p {
+  color: #434c4e;
+  margin: 0;
+}
+
+.no-results .subtitle {
+  color: #bec8c8;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 
 @media (max-width: 768px) {

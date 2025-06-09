@@ -21,12 +21,15 @@ function handleApiError(error, defaultMessage) {
     errorMessage = error.response.data?.detail || error.response.data?.message || defaultMessage;
   }
 
-  Swal.fire({
-    icon: 'error',
-    title: 'Error',
-    text: errorMessage,
-    confirmButtonColor: '#7cbc24'
-  });
+  // Solo mostramos el popup para errores que no sean de búsqueda
+  if (!error.response || (error.response.status !== 404 && error.response.status !== 400)) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: errorMessage,
+      confirmButtonColor: '#7cbc24'
+    });
+  }
 
   throw error;
 }
@@ -66,6 +69,18 @@ async function getExpedientes(filters = {}) {
       hasPrev: response.data.has_prev || false
     };
   } catch (error) {
+    // Si es un error de búsqueda, retornamos un resultado vacío sin mostrar error
+    if (error.response?.status === 404 || error.response?.status === 400) {
+      return {
+        data: [],
+        totalRecords: 0,
+        page: 1,
+        pageSize: 7,
+        hasNext: false,
+        hasPrev: false
+      };
+    }
+    // Para otros errores, usamos el manejador de errores estándar
     return handleApiError(error, 'No se pudieron obtener los expedientes');
   }
 }

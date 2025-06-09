@@ -5,8 +5,10 @@
         <div class="relative">
           <BaseInput
             v-model="expedienteIdBusqueda"
-            @input="$emit('filter-by-expediente-id', expedienteIdBusqueda)"
+            type="number"
+            @input="handleExpedienteIdSearch"
             placeholder="ID Expediente"
+            :rules="[v => !v || /^\d*$/.test(v) || 'Solo se permiten números']"
           />
           <img src="../../assets/images/search.png" alt="Buscar" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4" />
         </div>
@@ -16,7 +18,7 @@
         <div class="relative">
           <BaseInput
             v-model="nombreBusqueda"
-            @input="$emit('filter-by-name', nombreBusqueda)"
+            @input="handleNombreSearch"
             placeholder="Nombre"
           />
           <img src="../../assets/images/search.png" alt="Buscar" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4" />
@@ -27,8 +29,10 @@
         <div class="relative">
           <BaseInput
             v-model="socioIdBusqueda"
-            @input="$emit('filter-by-socio-id', socioIdBusqueda)"
+            type="number"
+            @input="handleSocioIdSearch"
             placeholder="ID Socio"
+            :rules="[v => !v || /^\d*$/.test(v) || 'Solo se permiten números']"
           />
           <img src="../../assets/images/search.png" alt="Buscar" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4" />
         </div>
@@ -38,7 +42,7 @@
         <div class="relative">
           <BaseInput
             v-model="curpBusqueda"
-            @input="$emit('filter-by-curp', curpBusqueda)"
+            @input="handleCurpSearch"
             placeholder="CURP"
           />
           <img src="../../assets/images/search.png" alt="Buscar" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4" />
@@ -80,7 +84,36 @@ export default {
         { value: 'aprobado', label: 'Aprobado' },
         { value: 'pendiente', label: 'Pendiente' },
         { value: 'rechazado', label: 'Rechazado' }
-      ]
+      ],
+      searchTimeout: null
+    }
+  },
+  methods: {
+    handleExpedienteIdSearch(value) {
+      this.debounceSearch(() => {
+        this.$emit('filter-by-expediente-id', value)
+      })
+    },
+    handleNombreSearch(value) {
+      this.debounceSearch(() => {
+        this.$emit('filter-by-name', value.toLowerCase())
+      })
+    },
+    handleSocioIdSearch(value) {
+      this.debounceSearch(() => {
+        this.$emit('filter-by-socio-id', value)
+      })
+    },
+    handleCurpSearch(value) {
+      this.debounceSearch(() => {
+        this.$emit('filter-by-curp', value.toUpperCase())
+      })
+    },
+    debounceSearch(callback) {
+      if (this.searchTimeout) {
+        clearTimeout(this.searchTimeout)
+      }
+      this.searchTimeout = setTimeout(callback, 300)
     }
   }
 }
