@@ -40,7 +40,7 @@
   }
 
   .checklist-items {
-    @apply bg-white p-4 md:p-8 rounded-lg flex flex-col;
+    @apply flex flex-col;
   }
 
   .documento-checklist {

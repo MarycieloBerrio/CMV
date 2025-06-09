@@ -155,31 +155,42 @@
           </template>
 
           <template v-else>
-            <div class="preview-documento">
-              <div class="preview-documento-header">
-                <button @click="documentoSeleccionado = null" class="boton-volver-preview">←</button>
-                <p class="nombre-documento-preview">{{ documentoSeleccionado.nombre }}</p>
+            <div class="preview-documento-container">
+              <div class="preview-section">
+                <div class="preview-documento-header">
+                  <button @click="documentoSeleccionado = null" class="boton-volver-preview">←</button>
+                  <p class="nombre-documento-preview">{{ documentoSeleccionado.nombre }}</p>
+                </div>
+                <DocumentPreview
+                  :documento="documentoSeleccionado"
+                  :expedienteId="expedienteId"
+                  class="document-preview"
+                  @aprobar-documento="handleAprobarDocumento"
+                  @rechazar-documento="handleRechazarDocumento"
+                />
+                <div class="documento-info">
+                  <p>ID del documento: {{ documentoSeleccionado.documento_id }}</p>
+                  <p>Tipo de documento: {{ documentoSeleccionado.tipo_documento?.descripcion || 'No especificado' }}</p>
+                </div>
+                <div class="preview-actions">
+                  <BaseButton @click="$refs.updateFileInput.click()" class="bg-primary text-white hover:bg-opacity-90 boton-actualizar">
+                    Actualizar documento
+                  </BaseButton>
+                </div>
+                <input
+                  type="file"
+                  ref="updateFileInput"
+                  @change="actualizarDocumento"
+                  style="display: none"
+                />
               </div>
-              <DocumentPreview
-                :documento="documentoSeleccionado"
-                :expedienteId="expedienteId"
-                class="document-preview"
-              />
-              <div class="documento-info">
-                <p>ID del documento: {{ documentoSeleccionado.documento_id }}</p>
-                <p>Tipo de documento: {{ documentoSeleccionado.tipo_documento?.descripcion || 'No especificado' }}</p>
+
+              <div class="validation-section">
+                <DocumentoChecklist
+                  @aprobar-documento="handleAprobarDocumento"
+                  @rechazar-documento="handleRechazarDocumento"
+                />
               </div>
-              <div class="preview-actions">
-                <BaseButton @click="$refs.updateFileInput.click()" class="bg-primary text-white hover:bg-opacity-90 boton-actualizar">
-                  Actualizar documento
-                </BaseButton>
-              </div>
-              <input
-                type="file"
-                ref="updateFileInput"
-                @change="actualizarDocumento"
-                style="display: none"
-              />
             </div>
           </template>
         </div>
@@ -198,13 +209,15 @@ import BaseButton from '@/features/auth/components/atoms/BaseButton.vue'
 import { getDocumentosByExpediente, getExpedientes, downloadDocumento, getDocumentoPreview, uploadDocumento, remitirDocumentos } from '../../api/ExpedienteService'
 import { getTiposDocumentosWithCategoria } from "../../api/ParametrizacionService"
 import '../../assets/css/ExpedienteDetalle.css'
+import DocumentoChecklist from '../molecules/DocumentoChecklist.vue'
 
 export default {
   name: 'ExpedienteDetallePage',
   components: {
     Header,
     DocumentPreview,
-    BaseButton
+    BaseButton,
+    DocumentoChecklist
   },
   data() {
     return {
@@ -389,6 +402,14 @@ export default {
       } catch (error) {
         console.error('Error al remitir el expediente:', error)
       }
+    },
+    handleAprobarDocumento(documento) {
+      // TODO: Implementar lógica de aprobación
+      console.log('Documento aprobado:', documento)
+    },
+    handleRechazarDocumento(documento) {
+      // TODO: Implementar lógica de rechazo
+      console.log('Documento rechazado:', documento)
     }
   },
   async created() {
@@ -676,10 +697,16 @@ export default {
   padding: 1rem;
 }
 
-.preview-documento {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.preview-documento-container {
+  @apply flex gap-6 h-full;
+}
+
+.preview-section {
+  @apply flex-1 flex flex-col gap-4;
+}
+
+.validation-section {
+  @apply w-96 flex-shrink-0;
 }
 
 .preview-documento-header {
@@ -741,6 +768,16 @@ export default {
   .categoria-tab {
     width: 100%;
     text-align: center;
+  }
+}
+
+@media (max-width: 1024px) {
+  .preview-documento-container {
+    @apply flex-col;
+  }
+
+  .validation-section {
+    @apply w-full;
   }
 }
 </style>
