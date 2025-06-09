@@ -53,10 +53,6 @@
         ul {
           @apply list-none flex flex-col gap-3.5;
         }
-
-        .boton-cargar {
-          @apply border border-dotted border-valladolid-secondary max-w-48 rounded-lg font-medium flex items-center justify-center gap-1.5 px-2;
-        }
       }
     }
   }
@@ -131,7 +127,11 @@
 }
 
 .boton-descargar {
-  @apply bg-valladolid-secondary text-white border-none px-3 py-1.5 rounded-md hover:bg-opacity-90 transition-all;
+  min-width: 140px !important;
+  max-width: 160px !important;
+  font-size: 0.875rem !important;
+  height: 28px !important;
+  padding: 0.25rem 0.75rem !important;
 }
 
 .expediente-detalle-container{
@@ -178,4 +178,89 @@
   .activa{
     font-weight: bold;
   }
+}
+
+.botones-accion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  align-items: flex-start;
+  padding-left: 1rem;
+}
+
+.botones-accion .v-btn {
+  min-width: 180px;
+  max-width: 200px;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  height: 32px;
+  font-size: 0.875rem;
+}
+
+.botones-accion .v-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.preview-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.preview-actions .v-btn {
+  min-width: 180px;
+  max-width: 200px;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  height: 32px;
+  font-size: 0.875rem;
+}
+
+.preview-actions .v-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.titulo-lista-documentos {
+  color: #4B5563;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.lista-documentos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: -0.5rem;
+}
+
+.no-documentos {
+  text-align: center;
+  color: #6c757d;
+  padding: 0.5rem;
+  font-size: 1rem;
+  background-color: #f8f9fa83;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.categoria-tab.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.boton-actualizar {
+  min-width: 200px !important;
+  max-width: 220px !important;
+  font-size: 0.875rem !important;
+  height: 36px !important;
+  padding: 0.5rem 1rem !important;
 }

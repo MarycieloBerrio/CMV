@@ -25,20 +25,20 @@
       <div class="informacion-personal">
         <div class="categorias-documentos">
           <p
-            :class="['categoria-tab', { activa: categoriaSeleccionada === 'Socio' }]"
-            @click="categoriaSeleccionada = 'Socio'"
+            :class="['categoria-tab', { activa: categoriaSeleccionada === 'Socio', disabled: documentoSeleccionado }]"
+            @click="!documentoSeleccionado && (categoriaSeleccionada = 'Socio')"
           >
             Información personal
           </p>
           <p
-            :class="['categoria-tab', { activa: categoriaSeleccionada === 'Pasivo' }]"
-            @click="categoriaSeleccionada = 'Pasivo'"
+            :class="['categoria-tab', { activa: categoriaSeleccionada === 'Pasivo', disabled: documentoSeleccionado }]"
+            @click="!documentoSeleccionado && (categoriaSeleccionada = 'Pasivo')"
           >
             Operaciones pasivas
           </p>
           <p
-            :class="['categoria-tab', { activa: categoriaSeleccionada === 'Activo' }]"
-            @click="categoriaSeleccionada = 'Activo'"
+            :class="['categoria-tab', { activa: categoriaSeleccionada === 'Activo', disabled: documentoSeleccionado }]"
+            @click="!documentoSeleccionado && (categoriaSeleccionada = 'Activo')"
           >
             Operaciones activas
           </p>
@@ -47,43 +47,82 @@
         <hr class="linea-divisora"/>
         <div class="documentos-section">
           <template v-if="!documentoSeleccionado">
-            <p class="documentos-section-titulo">Lista de documentos</p>
-            <div class="documentos-actions">
-              <button
-                v-if="documentosSeleccionados.length > 0"
-                @click="descargarDocumentosSeleccionados"
-                class="boton-descargar"
-              >
-                Descargar ({{ documentosSeleccionados.length }})
-              </button>
+            <h3 class="titulo-lista-documentos">Lista de documentos</h3>
+            <div class="lista-documentos">
+              <div v-if="documentosFiltrados.length === 0" class="no-documentos">
+                No hay ningún documento cargado
+              </div>
+              <div v-else v-for="doc in documentosFiltrados" :key="doc.id" class="documento-item">
+                <div class="documento-content" v-if="doc.expediente_id == expedienteId">
+                  <span
+                    class="documento-nombre"
+                    @click="seleccionarDocumento(doc)"
+                  >
+                    {{ doc.nombre }}
+                  </span>
+                  <input
+                    type="checkbox"
+                    :id="'doc-' + doc.id"
+                    v-model="documentosSeleccionados"
+                    :value="doc"
+                    class="documento-checkbox"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div v-if="categoriaSeleccionada && documentosFiltrados.length > 0">
-              <ul class="documentos-list">
-                <li
-                  class="documento-item"
-                  v-for="(doc, index) in documentosFiltrados"
-                  :key="index"
-                >
-                  <div class="documento-content" v-if="doc.expediente_id == expedienteId">
-                    <span
-                      class="documento-nombre"
-                      @click="seleccionarDocumento(doc)"
-                    >
-                      {{ doc.nombre }}
-                    </span>
-                    <input
-                      type="checkbox"
-                      :id="'doc-' + index"
-                      v-model="documentosSeleccionados"
-                      :value="doc"
-                      class="documento-checkbox"
-                    />
-                  </div>
-                </li>
-              </ul>
+            <div class="botones-accion">
+              <BaseButton
+                v-if="documentosSeleccionados.length > 0"
+                @click="descargarDocumentosSeleccionados"
+                class="bg-primary text-white hover:bg-opacity-90 boton-descargar"
+              >
+                Descargar ({{ documentosSeleccionados.length }})
+              </BaseButton>
+              <BaseButton @click="abrirSelectorDocumento" class="bg-gray-200 text-gray-700 hover:bg-gray-300">
+                Cargar documento
+              </BaseButton>
+              <BaseButton @click="remitirExpediente" class="bg-primary text-white hover:bg-opacity-90">
+                Enviar a remisión
+              </BaseButton>
             </div>
-            <p v-else>No hay documentos cargados</p>
+
+            <!-- Modal para seleccionar tipo de documento -->
+            <v-dialog v-model="showTipoDocumentoModal" max-width="500px">
+              <template v-slot:default>
+                <div class="modal-content">
+                  <h2>Selecciona el tipo de documento</h2>
+                  <div class="tipos-documento">
+                    <div v-if="tiposDocumentos.length === 0" class="no-tipos">
+                      No hay tipos de documentos disponibles
+                    </div>
+                    <div
+                      v-for="ciclo in tiposDocumentos"
+                      :key="ciclo.id"
+                      class="ciclo-documento"
+                    >
+                      <h3 class="ciclo-titulo">{{ ciclo.descripcion }}</h3>
+                      <div
+                        v-for="categoria in ciclo.categorias"
+                        :key="categoria.id"
+                        class="categoria-documento"
+                      >
+                        <h4 class="categoria-titulo">{{ categoria.descripcion }}</h4>
+                        <div
+                          v-for="tipo in categoria.tipos_documento"
+                          :key="tipo.id"
+                          class="tipo-documento-item"
+                          @click="seleccionarTipoDocumento(tipo)"
+                        >
+                          <span class="tipo-documento-nombre">{{ tipo.descripcion }}</span>
+                          <span v-if="tipo.obligatorio" class="obligatorio">(Obligatorio)</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </v-dialog>
 
             <input
               type="file"
@@ -91,36 +130,28 @@
               @change="handleFileUpload"
               style="display: none"
             />
-            <button @click="abrirSelectorDocumento" class="boton-cargar">Cargar documento
-              <img src="../../assets/images/upload.png" alt="Cargar documento" class="icono-cargar"/>
-            </button>
-            <button @click="remitirExpediente" class="boton-cargar">Enviar a revisión</button>
 
-            <!-- Modal para seleccionar tipo de documento -->
-            <div v-if="mostrarModalTipoDocumento" class="modal-tipo-documento">
-              <div class="modal-contenido">
-                <div class="modal-header">
-                  <h3>Seleccionar tipo de documento</h3>
-                  <button @click="cerrarModalTipoDocumento" class="boton-cerrar">×</button>
-                </div>
-                <div class="modal-body">
-                  <div v-for="ciclo in categoriasDocumentos" :key="ciclo.id" class="categoria-documentos">
-                    <h4>{{ ciclo.descripcion }}</h4>
-                    <div v-for="categoria in ciclo.categorias" :key="categoria.id">
-                      <h5>{{ categoria.descripcion }}</h5>
-                      <ul class="lista-tipos-documentos">
-                        <li v-for="tipo in categoria.tipos_documento" :key="tipo.id"
-                            @click="seleccionarTipoDocumento(tipo)"
-                            class="tipo-documento-item">
-                          {{ tipo.descripcion }}
-                          <span v-if="tipo.obligatorio" class="obligatorio">*</span>
-                        </li>
-                      </ul>
+            <!-- Modal de vista previa -->
+            <v-dialog v-model="showPreviewModal" fullscreen>
+              <template v-slot:default>
+                <div class="preview-container">
+                  <div class="preview-header">
+                    <h2>Vista previa del documento</h2>
+                    <div class="preview-actions">
+                      <BaseButton @click="$refs.updateFileInput.click()" class="bg-primary text-white hover:bg-opacity-90">
+                        Actualizar documento
+                      </BaseButton>
+                      <button @click="showPreviewModal = false" class="close-button">×</button>
                     </div>
                   </div>
+                  <DocumentPreview
+                    v-if="selectedDocument"
+                    :documento="selectedDocument"
+                    @close="showPreviewModal = false"
+                  />
                 </div>
-              </div>
-            </div>
+              </template>
+            </v-dialog>
           </template>
 
           <template v-else>
@@ -134,15 +165,21 @@
                 :expedienteId="expedienteId"
                 class="document-preview"
               />
-              <p>ID del documento: {{ documentoSeleccionado.nombre }}</p>
-              <p>Tipo de documento: {{ documentoSeleccionado.tipo || 'PDF' }}</p>
+              <div class="documento-info">
+                <p>ID del documento: {{ documentoSeleccionado.documento_id }}</p>
+                <p>Tipo de documento: {{ documentoSeleccionado.tipo_documento?.descripcion || 'No especificado' }}</p>
+              </div>
+              <div class="preview-actions">
+                <BaseButton @click="$refs.updateFileInput.click()" class="bg-primary text-white hover:bg-opacity-90 boton-actualizar">
+                  Actualizar documento
+                </BaseButton>
+              </div>
               <input
                 type="file"
                 ref="updateFileInput"
                 @change="actualizarDocumento"
                 style="display: none"
               />
-              <button @click="$refs.updateFileInput.click()" class="boton-cargar">Actualizar documento</button>
             </div>
           </template>
         </div>
@@ -157,6 +194,7 @@
 <script>
 import Header from '../organisms/Header.vue'
 import DocumentPreview from '../molecules/DocumentPreview.vue'
+import BaseButton from '@/features/auth/components/atoms/BaseButton.vue'
 import { getDocumentosByExpediente, getExpedientes, downloadDocumento, getDocumentoPreview, uploadDocumento, remitirDocumentos } from '../../api/ExpedienteService'
 import { getTiposDocumentosWithCategoria } from "../../api/ParametrizacionService"
 import '../../assets/css/ExpedienteDetalle.css'
@@ -165,7 +203,8 @@ export default {
   name: 'ExpedienteDetallePage',
   components: {
     Header,
-    DocumentPreview
+    DocumentPreview,
+    BaseButton
   },
   data() {
     return {
@@ -182,15 +221,29 @@ export default {
       pasivos: [],
       activos: [],
       categoriaSeleccionada: 'Socio',
-      isSidebarCompact: localStorage.getItem('modoCompacto') === 'true' || false
+      isSidebarCompact: localStorage.getItem('modoCompacto') === 'true' || false,
+      showTipoDocumentoModal: false,
+      showPreviewModal: false,
+      selectedDocument: null,
+      tiposDocumentos: []
     }
   },
   computed: {
     documentosFiltrados() {
-      if (this.categoriaSeleccionada === 'Socio') return this.socio;
-      if (this.categoriaSeleccionada === 'Pasivo') return this.pasivos;
-      if (this.categoriaSeleccionada === 'Activo') return this.activos;
-      return [];
+      if (!this.documentos) return [];
+
+      return this.documentos.filter(doc => {
+        if (this.categoriaSeleccionada === 'Socio') {
+          return doc.ciclo_vida?.descripcion === 'Socio';
+        }
+        if (this.categoriaSeleccionada === 'Pasivo') {
+          return doc.ciclo_vida?.descripcion === 'Pasivo';
+        }
+        if (this.categoriaSeleccionada === 'Activo') {
+          return doc.ciclo_vida?.descripcion === 'Activo';
+        }
+        return false;
+      });
     }
   },
   methods: {
@@ -215,14 +268,14 @@ export default {
     },
     async cargarTiposDocumentos() {
       try {
-        const categorias = await getTiposDocumentosWithCategoria()
-        this.categoriasDocumentos = categorias.ciclos_vida || []
+        const tipos = await getTiposDocumentosWithCategoria();
+        this.tiposDocumentos = tipos.ciclos_vida || [];
       } catch (error) {
-        console.error('Error al cargar tipos de documentos:', error)
+        console.error('Error al cargar tipos de documentos:', error);
       }
     },
     abrirSelectorDocumento() {
-      this.mostrarModalTipoDocumento = true
+      this.showTipoDocumentoModal = true
     },
     extraerDocumentos(results) {
       if (!results) return []
@@ -255,62 +308,58 @@ export default {
       })
       return documentos
     },
-    seleccionarTipoDocumento(tipoDocumento) {
-      this.tipoDocumentoSeleccionado = tipoDocumento.id
-      this.mostrarModalTipoDocumento = false
-      this.$refs.fileInput.click()
-    },
-    cerrarModalTipoDocumento() {
-      this.mostrarModalTipoDocumento = false
+    seleccionarTipoDocumento(tipo) {
+      this.tipoDocumentoSeleccionado = tipo.id;
+      this.showTipoDocumentoModal = false;
+      this.$refs.fileInput.click();
     },
     async handleFileUpload(event) {
-      const file = event.target.files[0]
+      const file = event.target.files[0];
       if (file && this.tipoDocumentoSeleccionado) {
         try {
           const resultado = await uploadDocumento(
             this.expedienteId,
             this.tipoDocumentoSeleccionado,
             file
-          )
+          );
 
           if (resultado) {
-            this.documentos.push({
-              nombre: file.name,
-              tipo: file.type,
-              documento_id: resultado.documento_id,
-              expediente_id: this.expedienteId,
-              tipo_documento_id: this.tipoDocumentoSeleccionado
-            })
-            this.tipoDocumentoSeleccionado = null
+            // Recargar los documentos después de subir uno nuevo
+            const respuesta = await getDocumentosByExpediente(this.expedienteId);
+            this.documentos = this.extraerDocumentos(respuesta.ciclos_vida);
+            this.tipoDocumentoSeleccionado = null;
           }
         } catch (error) {
-          console.error('Error al subir el documento:', error)
-          alert('No se pudo subir el documento')
+          console.error('Error al subir el documento:', error);
+          alert('No se pudo subir el documento');
         }
 
-        event.target.value = ''
+        event.target.value = '';
       } else if (!this.tipoDocumentoSeleccionado) {
-        alert('Debe seleccionar un tipo de documento')
-        event.target.value = ''
+        alert('Debe seleccionar un tipo de documento');
+        event.target.value = '';
       }
     },
     async seleccionarDocumento(doc) {
-      this.documentoSeleccionado = doc
+      this.documentoSeleccionado = doc;
       try {
         if (doc.documento_id) {
-          const urlPresignada = await getDocumentoPreview(this.expedienteId, doc.documento_id)
-          this.documentoSeleccionado.url_presignada = urlPresignada.results.uri
+          const response = await getDocumentoPreview(this.expedienteId, doc.documento_id);
+          if (response && response.results) {
+            this.documentoSeleccionado.url_presignada = response.results.uri;
+            this.documentoSeleccionado.content_type = response.results.content_type;
+          }
         }
       } catch (error) {
-        console.error('Error al obtener la vista previa del documento:', error)
+        console.error('Error al obtener la vista previa del documento:', error);
       }
     },
     actualizarDocumento(event) {
       const file = event.target.files[0]
       if (file) {
-        this.documentoSeleccionado.nombre = file.name
-        this.documentoSeleccionado.tipo = file.type
-        this.documentoSeleccionado.archivo = file
+        this.selectedDocument.nombre = file.name
+        this.selectedDocument.tipo = file.type
+        this.selectedDocument.archivo = file
         event.target.value = ''
       }
     },
@@ -545,61 +594,86 @@ export default {
   height: 16px;
 }
 
-.modal-tipo-documento {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+.modal-content {
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
 }
 
-.modal-contenido {
-  background-color: white;
-  border-radius: 8px;
-  width: 80%;
-  max-width: 600px;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  padding: 1rem;
-  border-bottom: 1px solid #eef0f2;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-body {
-  padding: 1rem;
-}
-
-.categoria-documentos {
+.modal-content h2 {
+  color: #2c3333;
+  font-size: 1.25rem;
+  font-weight: 600;
   margin-bottom: 1.5rem;
 }
 
-.lista-tipos-documentos {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.tipos-documento {
+  max-height: 60vh;
+  overflow-y: auto;
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.ciclo-documento {
+  margin-bottom: 1.5rem;
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.ciclo-titulo {
+  color: #84BD00;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.categoria-documento {
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.categoria-titulo {
+  color: #434c4e;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
 }
 
 .tipo-documento-item {
-  padding: 0.5rem;
+  padding: 0.75rem;
+  margin-bottom: 0.25rem;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+  background-color: #f8f9fa;
 }
 
 .tipo-documento-item:hover {
-  background-color: #eef0f2;
+  background-color: rgba(132, 189, 0, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tipo-documento-nombre {
+  color: #434c4e;
 }
 
 .obligatorio {
   color: #e6332a;
   margin-left: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.no-tipos {
+  text-align: center;
+  color: #6c757d;
+  padding: 1rem;
 }
 
 .preview-documento {
