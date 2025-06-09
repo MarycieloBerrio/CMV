@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .table-container {
+    @apply overflow-x-auto w-full flex items-start justify-center;
+  }
+
+  .expedientes-table {
+    @apply w-[90%] border-collapse;
+  }
+
+  .expedientes-table th {
+    @apply bg-valladolid-secondary/20 p-2 text-valladolid-secondary text-base;
+  }
+
+  .expedientes-table td {
+    @apply p-2 border-b border-gray-200;
+  }
+
+  .action-button {
+    @apply bg-transparent border-none cursor-pointer p-2;
+  }
+
+  .action-icon {
+    @apply w-5 h-5 cursor-pointer;
+  }
+
+  @media (max-width: 768px) {
+    .expedientes-table th,
+    .expedientes-table td {
+      @apply text-sm p-1.5;
+    }
+  }
+}

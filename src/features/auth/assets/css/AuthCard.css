@@ -1,0 +1,54 @@
+.auth-card {
+  padding: 40px; /* Increased padding */
+  max-width: 480px; /* Wider card */
+  width: 100%;
+  background-color: white;
+  border-radius: 20px; /* Slightly larger radius */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* This centers child elements */
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 320px; /* Set a max-width for the form */
+}
+
+.auth-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Form elements spacing */
+.auth-card .formkit-wrapper {
+  margin-bottom: 24px; /* Consistent bottom margin */
+}
+
+/* Links container */
+.links-container {
+  text-align: center;
+  margin-top: 32px; /* More space above links */
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.links-container a {
+  display: inline-block; /* Better for spacing */
+  color: #7cbc24;
+  text-decoration: none;
+  font-weight: 500;
+  margin: 0 10px; /* More space between links */
+  padding: 8px 16px; /* Larger click area */
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.links-container a:hover {
+  background-color: rgba(124, 188, 36, 0.1);
+  transform: scale(1.02);
+}

@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-valladolid-light text-valladolid-dark;
+  }
+  h1 {
+    @apply text-4xl font-bold text-valladolid-primary;
+  }
+  h2 {
+    @apply text-3xl font-bold text-valladolid-primary;
+  }
+  h3 {
+    @apply text-2xl font-bold text-valladolid-primary;
+  }
+  h4 {
+    @apply text-xl font-bold text-valladolid-primary;
+  }
+  h5 {
+    @apply text-lg font-bold text-valladolid-primary;
+  }
+  h6 {
+    @apply text-base font-bold text-valladolid-primary;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-valladolid-primary text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition-all;
+  }
+  .btn-secondary {
+    @apply bg-valladolid-secondary text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition-all;
+  }
+  .btn-accent {
+    @apply bg-valladolid-accent text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition-all;
+  }
+  .input-field {
+    @apply border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-valladolid-primary focus:border-transparent;
+  }
+  .card {
+    @apply bg-white rounded-lg shadow-md p-6;
+  }
+}
+
+/* Vuetify overrides */
+.v-btn:hover {
+  @apply bg-valladolid-primary !important;
+}
+
+.mdi {
+  @apply text-xl p-0.5 !important;
+}
+
+.formkit-messages {
+  @apply text-valladolid-accent list-none !important;
+}
+
+.swal2-confirm {
+  @apply bg-valladolid-secondary text-white !important;
+}
+
+.swal2-cancel {
+  @apply bg-valladolid-accent text-white !important;
+}
+
+.swal2-actions button:hover {
+  @apply bg-valladolid-primary !important;
+}

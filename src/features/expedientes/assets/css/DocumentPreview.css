@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .document-preview-container {
+    @apply flex flex-col h-full w-full bg-gray-100 rounded-lg overflow-hidden relative;
+  }
+
+  .document-preview-container:fullscreen {
+    @apply bg-white p-5 rounded-none;
+  }
+
+  .preview-controls {
+    @apply inline-flex justify-start items-center gap-3 p-1.5 w-fit flex-wrap max-w-[calc(100%-16px)];
+  }
+
+  .preview-controls.pdf-controls {
+    @apply p-1.5;
+  }
+
+  .zoom-controls,
+  .rotation-controls,
+  .fullscreen-controls {
+    @apply flex items-center gap-1.5;
+  }
+
+  .control-button {
+    @apply bg-white border border-gray-200 cursor-pointer px-2 py-1 rounded transition-all text-sm hover:bg-gray-50 hover:border-gray-300 active:bg-gray-100 active:translate-y-px disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-50;
+  }
+
+  .control-text {
+    @apply text-base font-bold text-gray-600;
+  }
+
+  .zoom-text {
+    @apply min-w-[50px] text-center text-sm text-gray-600;
+  }
+
+  .preview-content {
+    @apply flex-1 relative overflow-hidden flex justify-center items-center min-h-0 bg-gray-200 w-full;
+  }
+
+  .preview-content.pdf-mode {
+    @apply pt-0;
+  }
+
+  .preview-content.fullscreen {
+    @apply bg-white;
+  }
+
+  .pdf-preview,
+  .image-preview {
+    @apply h-full w-full flex justify-center items-center;
+  }
+
+  .pdf-preview embed {
+    @apply bg-white shadow-md w-full h-full;
+  }
+
+  .image-preview {
+    @apply overflow-auto p-5;
+  }
+
+  .preview-image {
+    @apply max-h-full w-auto object-contain select-none;
+  }
+
+  :fullscreen .preview-controls {
+    @apply bg-white/95 border-gray-200;
+  }
+
+  :fullscreen .control-button {
+    @apply bg-white border-gray-200;
+  }
+
+  :fullscreen .control-text,
+  :fullscreen .zoom-text {
+    @apply text-gray-600;
+  }
+
+  :fullscreen .control-button:hover {
+    @apply bg-gray-50;
+  }
+
+  @media (max-width: 480px) {
+    .preview-controls {
+      @apply mx-1 max-w-[calc(100%-8px)] gap-2 p-1;
+    }
+
+    .control-button {
+      @apply px-1.5 py-0.5;
+    }
+
+    .zoom-text {
+      @apply min-w-[40px] text-xs;
+    }
+  }
+
+  .pdf-preview embed,
+  .preview-image {
+    @apply max-w-full max-h-full object-contain;
+  }
+}

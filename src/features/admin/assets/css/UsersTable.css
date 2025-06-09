@@ -1,0 +1,71 @@
+.page-title {
+  color: #417100;
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+  display: inline-block;
+}
+
+.utilities {
+  display: flex;
+  width: 100%;
+  margin-bottom: 5vh;
+}
+
+.utilities .SearchBar {
+  flex: 1;
+  max-width: 400px;
+}
+
+.utilities .SearchBar input {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 1rem;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+
+.utilities .SearchBar input:focus {
+  border-color: #417100;
+  box-shadow: 0 2px 6px rgba(47, 106, 86, 0.2);
+  outline: none;
+}
+
+.buttons {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+}
+
+.v-data-table {
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.v-data-table thead th {
+  background-color: #417100;
+  color: white;
+  font-weight: bold;
+}
+
+.v-data-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.v-data-table tbody tr:focus {
+  background-color: #d8f5e0;
+}
+
+.BaseButton {
+  border-radius: 6px;
+  padding: 10px 15px;
+}
+
+.BaseButton[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

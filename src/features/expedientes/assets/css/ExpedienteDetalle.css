@@ -1,0 +1,181 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .expediente-detalle-container {
+    @apply w-full h-full font-sans flex flex-col;
+  }
+
+  .content {
+    @apply p-8 flex flex-col;
+
+    .header {
+      @apply flex items-center gap-2 mb-8;
+
+      .back-button {
+        @apply cursor-pointer p-0 flex items-end;
+
+        .back-icon {
+          @apply w-full p-0;
+        }
+      }
+
+      .titulo {
+        @apply text-2xl text-valladolid-dark;
+      }
+    }
+
+    .detalles-expediente-container {
+      @apply flex gap-7;
+      
+      .detalles-container {
+        @apply bg-valladolid-secondary/15 rounded-lg max-w-[37.875rem] grid grid-cols-2 p-4;
+      }
+      
+      .fechas-container {
+        @apply text-valladolid-secondary font-light text-sm;
+      }
+    }
+
+    .informacion-personal {
+      .linea-divisora {
+        @apply text-valladolid-secondary my-1.5;
+      }
+      
+      .documentos-section {
+        @apply w-fit flex flex-col gap-5;
+
+        .documentos-section-titulo {
+          @apply text-valladolid-secondary font-medium;
+        }
+
+        ul {
+          @apply list-none flex flex-col gap-3.5;
+        }
+
+        .boton-cargar {
+          @apply border border-dotted border-valladolid-secondary max-w-48 rounded-lg font-medium flex items-center justify-center gap-1.5 px-2;
+        }
+      }
+    }
+  }
+}
+
+.preview-documento {
+  @apply pt-4 flex flex-col gap-4;
+
+  .preview-documento-header {
+    @apply flex gap-4;
+
+    .boton-volver-preview {
+      @apply bg-valladolid-secondary/15 rounded-lg text-center font-bold px-1.5;
+    }
+
+    .nombre-documento-preview {
+      @apply font-medium rounded-lg bg-valladolid-secondary px-6;
+    }
+  }
+}
+
+.modal-tipo-documento {
+  @apply fixed inset-0 w-full h-full bg-black/50 flex justify-center items-center z-50;
+}
+
+.modal-contenido {
+  @apply bg-white rounded-lg w-4/5 max-w-[600px] max-h-[80vh] overflow-y-auto shadow-lg;
+}
+
+.modal-header {
+  @apply flex justify-between items-center p-4 border-b border-gray-200;
+}
+
+.boton-cerrar {
+  @apply bg-transparent border-none text-2xl cursor-pointer;
+}
+
+.modal-body {
+  @apply p-4;
+}
+
+.categoria-documentos {
+  @apply mb-4;
+
+  h4 {
+    @apply text-valladolid-secondary mb-2;
+  }
+}
+
+.lista-tipos-documentos {
+  @apply list-none p-0;
+}
+
+.tipo-documento-item {
+  @apply p-2 mb-1 cursor-pointer rounded bg-valladolid-secondary/10 hover:bg-valladolid-secondary/30 transition-all;
+}
+
+.obligatorio {
+  @apply text-valladolid-accent ml-1;
+}
+
+.document-preview {
+  @apply h-[30rem] overflow-hidden;
+}
+
+.documento-content {
+  @apply flex gap-4 bg-transparent w-full;
+}
+
+.documento-nombre {
+  @apply bg-valladolid-secondary/15 text-center w-full rounded-md py-1 px-0.5 cursor-pointer;
+}
+
+.boton-descargar {
+  @apply bg-valladolid-secondary text-white border-none px-3 py-1.5 rounded-md hover:bg-opacity-90 transition-all;
+}
+
+.expediente-detalle-container{
+  display: flex;
+  flex-direction: row;
+}
+
+.preview-documento {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.preview-documento-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+}
+
+.boton-volver-preview {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.documento-checkbox{
+  cursor: pointer;
+}
+
+.categorias-documentos{
+  display: flex;
+  gap:6rem;
+  margin-top: 1rem;
+  font-size: 1.25rem;
+  color:#84BD00;
+  .categoria-tab{
+    cursor: pointer;
+  }
+  .activa{
+    font-weight: bold;
+  }
+}
