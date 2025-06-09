@@ -1,13 +1,6 @@
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
-
-function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
 
 const EXPEDIENTES_API = import.meta.env.VITE_EXPEDIENTES_API;
 
@@ -40,8 +33,8 @@ function handleApiError(error, defaultMessage) {
 }
 
 function buildConfig(extraHeaders = {}, params = {}) {
-  const requestId = generateUUID();
-  const correlationId = generateUUID();
+  const requestId = uuidv4();
+  const correlationId = uuidv4();
 
   return {
     headers: {

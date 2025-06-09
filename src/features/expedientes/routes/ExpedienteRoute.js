@@ -1,13 +1,8 @@
-import ExpedientePage from '../components/views/ExpedientePage.vue'
-import ExpedienteDetallePage from '../components/views/ExpedienteDetallePage.vue'
-import ParametrizacionPage from '../components/views/ParametrizacionPage.vue'
-import RemisionPage from "../components/views/RemisionPage.vue"
-
 const expedienteRoutes = [
   {
     path: '/expedientes',
     name: 'expedientes',
-    component: ExpedientePage,
+    component: () => import('../components/views/ExpedientePage.vue'),
     meta: {
       requiresAuth: true,
       permissions: ['view_expedientes']
@@ -16,7 +11,7 @@ const expedienteRoutes = [
   {
     path: '/expedientes/:id',
     name: 'expediente-detalle',
-    component: ExpedienteDetallePage,
+    component: () => import('../components/views/ExpedienteDetallePage.vue'),
     meta: {
       requiresAuth: true,
       permissions: ['view_expedientes']
@@ -25,7 +20,7 @@ const expedienteRoutes = [
   {
     path: '/expedientes/parametrizacion',
     name: 'expedientes-parametrizacion',
-    component: ParametrizacionPage,
+    component: () => import('../components/views/ParametrizacionPage.vue'),
     meta: {
       requiresAuth: true,
       permissions: ['view_expedientes']
@@ -34,7 +29,7 @@ const expedienteRoutes = [
   {
     path: '/expedientes/remision',
     name: 'expedientes-remision',
-    component: RemisionPage,
+    component: () => import('../components/views/RemisionPage.vue'),
     meta: {
       requiresAuth: true,
       permissions: ['view_expedientes']

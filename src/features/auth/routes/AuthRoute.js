@@ -1,9 +1,12 @@
-import RegisterPage from '../views/RegisterPage.vue'
-import LoginPage from '../views/LoginPage.vue'
-
 const authRoutes = [
-  { path: '/', component: LoginPage },
-  { path: '/register', component: RegisterPage },
+  {
+    path: '/',
+    component: () => import('../views/LoginPage.vue')
+  },
+  {
+    path: '/register',
+    component: () => import('../views/RegisterPage.vue')
+  },
 ]
 
 export default authRoutes

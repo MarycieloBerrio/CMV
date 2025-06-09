@@ -88,7 +88,7 @@ export default {
 }
 
 .checklist-items {
-  @apply space-y-3 mb-6 -ml-20;
+  @apply space-y-3 mb-6 -ml-0;
 }
 
 .checklist-item {

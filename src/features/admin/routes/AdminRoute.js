@@ -1,5 +1,9 @@
-import UserPage from '../components/views/UserPage.vue'
-
-const adminRoutes = [{ path: '/users', component: UserPage, meta: { requiresAuth: true } }]
+const adminRoutes = [
+  {
+    path: '/users',
+    component: () => import('../components/views/UserPage.vue'),
+    meta: { requiresAuth: true }
+  }
+]
 
 export default adminRoutes

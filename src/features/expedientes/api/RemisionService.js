@@ -1,13 +1,6 @@
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
-
-function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
 
 const EXPEDIENTES_API = import.meta.env.VITE_EXPEDIENTES_API;
 
@@ -40,8 +33,8 @@ function handleApiError(error, defaultMessage) {
 }
 
 function buildConfig(extraHeaders = {}, params = {}) {
-  const requestId = generateUUID();
-  const correlationId = generateUUID();
+  const requestId = uuidv4();
+  const correlationId = uuidv4();
 
   return {
     headers: {
@@ -56,15 +49,15 @@ function buildConfig(extraHeaders = {}, params = {}) {
 async function getExpedientesRemitidos(filters = {}) {
     try {
         const defaultFilters = {
-            page: 1, 
+            page: 1,
             page_size: 3, // Para probar se toma como si los primeros 3 expedientes fueran los remitidos
             ...filters
         };
 
         const config = buildConfig({}, defaultFilters);
-        
+
         const response = await apiClient.get('/api/expedientes', config);
-        
+
         return {
             data: response.data.results || [],
         };
@@ -76,3 +69,41 @@ async function getExpedientesRemitidos(filters = {}) {
 export {
     getExpedientesRemitidos
   };
+
+export const RemisionService = {
+  async remitirExpediente(id, datosRemision) {
+    try {
+      const requestId = uuidv4();
+      const correlationId = uuidv4();
+
+      const response = await axios.post(`${EXPEDIENTES_API}/expedientes/${id}/remitir`, datosRemision, {
+        headers: {
+          'X-Request-ID': requestId,
+          'X-Correlation-ID': correlationId
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Error al remitir expediente ${id}:`, error);
+      throw error;
+    }
+  },
+
+  async getHistorialRemisiones(id) {
+    try {
+      const requestId = uuidv4();
+      const correlationId = uuidv4();
+
+      const response = await axios.get(`${EXPEDIENTES_API}/expedientes/${id}/remisiones`, {
+        headers: {
+          'X-Request-ID': requestId,
+          'X-Correlation-ID': correlationId
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Error al obtener historial de remisiones del expediente ${id}:`, error);
+      throw error;
+    }
+  }
+};
