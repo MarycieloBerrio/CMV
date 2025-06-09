@@ -103,19 +103,20 @@ async function uploadDocumento(expedienteId, tipoDocumentoId, file, folder = '')
     formData.append('expediente_id', expedienteId);
     formData.append('tipo_documento_id', tipoDocumentoId);
     formData.append('file', file);
+    if (folder) {
+      formData.append('folder', folder);
+    }
 
-    // Configuración específica para FormData
     const config = {
       headers: {
         'Content-Type': 'multipart/form-data',
         'X-Channel-Id': 'GD',
         'X-Request-ID': generateUUID(),
-        'X-Correlation-ID': generateUUID()
+        'X-Correlation-ID': generateUUID(),
+        'X-Api-Version': '1.0'
       }
     };
 
-    // Uso axios directamente en lugar de apiClient para evitar la configuración global
-    // pq habían errores raros
     const response = await axios.post(
       `${EXPEDIENTES_API}api/expedientes/documentos`,
       formData,
@@ -131,10 +132,14 @@ async function uploadDocumento(expedienteId, tipoDocumentoId, file, folder = '')
 async function getDocumentoPreview(expedienteId, documentoId) {
   try {
     const config = buildConfig({
-      'Accept': 'application/json'
+      'Accept': 'application/json',
+      'X-Api-Version': '1.0'
     });
 
-    const response = await apiClient.get(`/api/expedientes/${expedienteId}/documentos/${documentoId}/preview`, config);
+    const response = await apiClient.get(
+      `/api/expedientes/${expedienteId}/documentos/${documentoId}/preview`,
+      config
+    );
     return response.data;
   } catch (error) {
     return handleApiError(error, 'No se pudo obtener la vista previa del documento');

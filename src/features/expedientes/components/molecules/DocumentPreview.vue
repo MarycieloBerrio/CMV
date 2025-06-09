@@ -42,12 +42,12 @@
           height="100%"
         />
       </div>
-      
+
       <!-- Vista previa de imagen -->
       <div v-else-if="isImage" class="image-preview" :style="contentStyle">
-        <img 
-          :src="imageUrl" 
-          :alt="documento.nombre" 
+        <img
+          :src="imageUrl"
+          :alt="documento.nombre"
           class="preview-image"
           @wheel="handleWheel"
         />
@@ -86,21 +86,21 @@ export default {
     const isFullscreen = ref(false)
     const previewData = ref(props.previewData)
     const isLoading = ref(false)
-    
+
     watch(() => props.previewData, (newValue) => {
       previewData.value = newValue
     })
-    
+
     const isPDF = computed(() => {
-    
+
       if (props.documento.url_presignada && props.documento.url_presignada.includes('.pdf')) {
         return true
       }
- 
+
       if (props.documento.tipo) {
         return props.documento.tipo === 'application/pdf' || props.documento.nombre.toLowerCase().endsWith('.pdf')
       }
- 
+
       if (props.documento.nombre) {
         return props.documento.nombre.toLowerCase().endsWith('.pdf')
       }
@@ -109,7 +109,7 @@ export default {
       }
       return false
     })
-    
+
     const isImage = computed(() => {
       // Verificar por URL presignada que contiene extensiones de imagen
       if (props.documento.url_presignada) {
@@ -118,7 +118,7 @@ export default {
       }
       // Verificar por tipo de documento
       if (props.documento.tipo) {
-        return props.documento.tipo.startsWith('image/') || 
+        return props.documento.tipo.startsWith('image/') ||
                /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(props.documento.nombre)
       }
       // Verificar por nombre de documento
@@ -127,12 +127,12 @@ export default {
       }
       return false
     })
-    
+
     const contentStyle = computed(() => ({
       transform: `scale(${zoom.value}) rotate(${rotation.value}deg)`,
       transformOrigin: 'center center'
     }))
-    
+
     const pdfUrl = computed(() => {
       if (isPDF.value) {
 
@@ -157,10 +157,10 @@ export default {
       }
       return ''
     })
-    
+
     const imageUrl = computed(() => {
       if (isImage.value) {
-    
+
         if (props.documento.url_presignada) {
           return props.documento.url_presignada
         }
